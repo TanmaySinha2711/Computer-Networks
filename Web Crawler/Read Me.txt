@@ -1,0 +1,71 @@
+Project 2: WEB CRAWLER
+
+
+Team Name: rish_tan
+
+
+Team Members:
+
+1. Rishabh Agarwal (NUID: 001215275)
+
+2. Tanmay Sinha    (NUID: 001821288)
+
+
+
+Execute in the following way: 	./webcrawler.py [username] [password]
+												OR
+								python webcrawler.py [username] [password]
+
+
+High Level Approach:
+
+1) The project had a requirement to build a Webcrawler that would crawl a webpage 'Fakebook' so that it would start retrieving secrete flags hidden inside the webpage. 
+
+2) First, we sent a HTTP GET request to the server to get the login page from the server and retrieved the HTTP response. We then extracted the csrftoken and session id 
+from the response
+.
+3) After getting the required header fields we sent the username and password to login fakebook from CLI and integrated them inside HTTP POST request.
+4) After receiving HTTP response from server, we fetched a new session ID from the response and combined it with the required header and request fields inside an HTTP 
+GET request message to fetch the home page ‘Fakebook’.
+
+5) We then defined 2 data structures for starting our web crawler: 
+    
+   a) an Queue "to_crawl". This was used to store each unvisited URL extracted from the href tag of the HTML page. The link to be crawl is removed from the Queue.
+    
+   b) an array visited which would store the links already crawled by our program. It acts like the frontier so that we do not revisit the links already crawled.
+
+6) We then fetched the html contents of the pages one by one.
+
+7) We wrote the program in a manner which could handle all kinds of exceptions along with HTTP status codes like 301, 404, Internal 500 etc.
+
+8) In case of 200 HTTP code, we searched for the flags using regex. If a flag is found we incremented the flag count. When flag count was 5 we exited the program.
+
+
+Challenges faced:
+
+1. We had to understand and learn the concept of HTTP GET and POST requests and the parameters that are supposed to be passed.
+2. The server was constantly getting timed out while executing the program. Even after adding Timeout exception in the crawl function it used to return 1 or 2 flags and 
+the socket used to close and time out.
+
+3. The same flags were repeatedly being displayed on the output screen. We realized that the flags are running in loop and we had to add an if statement that would 
+stop and exit the program after 5 unique flags are found. 
+
+We handled timeout errors by re-establishing connection with the server and also passed all the data structures to the function so it does not crawl already crawled links in the first session. Therefore, even if the connection times out it is re-established and the crawler won't stop until we get the 5 flags.
+
+
+Overview of steps taken in testing the program:
+
+We used Python to write this program. We first wrote the code in a text editor and tried to execute on the text editor only. First we ran the main fucntion and checked
+whether we are able to login to fakebook. 
+We then tried to use the 3 functions created to retrieve the html page, the links on that page and crawl the webpage. We initially inserted print statements wherever required to check whether our program is working as expected up until that point. After placing all the exceptions and 
+handling the HTML session codes we were able to retrieve our 5 secret flags. 
+We then used the CCIS machine and Linux terminal to execute the code and it worked there 
+as well successfully.
+
+
+Distribution of work:
+
+The project work was divided with equal responsibilites. The "start" function of the program and the initial fakebook login page was done by Rishabh Agarwal. He had to 
+understand the syntax and format of the HTTP GET/POST Requests and Responses. The second stage of defining the functions like getting the html page, searching the links
+in that page and defining the crawl function was done by Tanmay Sinha. The last part of the program like to handle and place error exceptions and retrieve the secret 
+flags was done collectively with equal inputs.
