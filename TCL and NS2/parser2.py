@@ -177,7 +177,8 @@ def get_latency(variant, rate):
     # if no packets were received do nothing
     if num_packets1 == 0 or num_packets2 == 0:
         return 0
-    return str(float((round_trip_time1 / num_packets1) * 1000)) + "\t" + str(float((round_trip_time2 / num_packets2) * 1000))
+    return str(float((round_trip_time1 / num_packets1) * 1000)) + "\t" + str(
+        float((round_trip_time2 / num_packets2) * 1000))
 
 
 # write to files for each comparison setup

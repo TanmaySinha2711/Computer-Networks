@@ -12,6 +12,7 @@ for var in tcp_var:
     for q in q_var:
         os.system(cmd + "exp3.tcl " + var + " " + q)
 
+
 # calculate throughput of the setup
 def get_throughput(variant, queue):
     # open tr output file generated from tcl file

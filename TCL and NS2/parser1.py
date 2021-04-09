@@ -30,7 +30,7 @@ def get_throughput(variant, rate):
             send_time = float(parse[1])
             sent.append(send_time)
 
-    for line in lines: 
+    for line in lines:
         parse = line.split(" ")
         # note the time a packet in received for node 3 to 4
         if parse[0] == 'r' and parse[2] == '2' and parse[3] == '3' and parse[7] == '2':
@@ -42,7 +42,7 @@ def get_throughput(variant, rate):
     # calculate the rtt for this packet
     rtt = float(received.pop() - sent[0])
     # calculate throughput in megabits/second
-    throughput = float((num_bytes*8)/(1024 * 1024))/rtt
+    throughput = float((num_bytes * 8) / (1024 * 1024)) / rtt
     return throughput
 
 
@@ -70,7 +70,7 @@ def get_packet_drop_rate(variant, rate):
     if send_packet == 0:
         return 0
     else:
-        return packet_drop_rate*100
+        return packet_drop_rate * 100
 
 
 # function to calculate latency
@@ -88,7 +88,7 @@ def get_latency(variant, rate):
 
     round_trip_time = 0.0
     num_packets = 0
-    
+
     for line in lines:
         parse = line.split(" ")
         if parse[7] == "2":
