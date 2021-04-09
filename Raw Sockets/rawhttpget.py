@@ -41,8 +41,6 @@ def fetch_mac_addr():
     # ifconfig = subprocess.check_output("/sbin/ifconfig")
     ifconfig = os.popen("/sbin/ifconfig").read()
     mac_addr = os.popen("ifconfig ens33| grep HWaddr | awk '{ print $5 }'").read()
-    # mac_addr = re.findall('HWaddr (.*?)', ifconfig)[0]
-    # print(mac_addr)
     source_hdw_addr = mac_addr.replace(':', '').strip().decode('hex')
     # print(source_hdw_addr)
 
@@ -53,10 +51,8 @@ def fetch_mac_addr():
                          int('FF', 16), int('FF', 16), int('FF', 16))
 
     # fetch gateway ip for destination protocol address
-    # route = subprocess.check_output("/sbin/route", "-n")
     route = os.popen("/sbin/route -n").read()
     gateway_ip_addr = re.findall(r'0.0.0.0(.*)0.0.0.0', route)[0].strip()
-    # print (gateway_ip_addr)
     dest_prot_addr = socket.inet_aton(gateway_ip_addr)
     # print(socket.inet_ntoa(dest_prot_addr))
 
@@ -91,22 +87,18 @@ def fetch_mac_addr():
                 sock.send(eth_frame)
                 break
             destination_mac = sock.recvfrom(2048)[0][6:12]
-    # print(destination_mac)
     return source_hdw_addr, destination_mac
 
 
 # functions to fetch source and destination IP addresses
 def fetch_ip_addr(host):
     try:
-        # print(host)
         dest_ip = socket.gethostbyname(host)
     except socket.error as e:
         print("Error message: Invalid Hostname " + e.strerror)
         sys.exit()
     ifconfig = os.popen('/sbin/ifconfig').read()
-    # print(ifconfig)
     source_ip = re.findall('inet addr:(.*?)\sB', ifconfig)[0]
-    # print (source_ip)
     return source_ip, dest_ip
 
 
@@ -129,7 +121,8 @@ def fetch_checksum(expr):
 
 
 # function which builds TCP segment based on parameters
-def build_tcp_segment(source_port, seq, ack, data_flag, syn, ack_fl, fin, push, data): #source_port, sequence_num, 0, 0, 0, 1, 0, 0, data
+def build_tcp_segment(source_port, seq, ack, data_flag, syn, ack_fl, fin, push,
+                      data):  # source_port, sequence_num, 0, 0, 0, 1, 0, 0, data
     dest_port = 80  # for http
     offset = 5
     urg_pointer = 0
@@ -300,10 +293,8 @@ def receive(sender_socket, receiver_socket, seq_num, src_port, received_data):
     data_flag = 1
     data = "GET " + path + " HTTP/1.1\r\nAccept: */*\r\nHost: " + host_name + "\r\nConnection: Keep-Alive\r\n\r\n"
     new_seq_num, new_ack = transmit(sender_socket, src_port, seq_num, ack, data_flag, ack_flag, syn, psh, data, 0)
-    #print(new_seq_num, new_ack)
 
     new_ack = seq_num + len(data)
-    #print (new_ack)
 
     # get http response
     nack = None
@@ -314,10 +305,9 @@ def receive(sender_socket, receiver_socket, seq_num, src_port, received_data):
     if http_data.find("200 OK") != -1:
         received_data = received_data + http_data
         new_ack = nack_seq_num + len(http_data)
-        
+
         # transmit (send_sock, src_port,seq_num, ack_num, data_flag, ack_flag, syn_flag,push_flag, data, fin_flag)
         new_seq, new_recvd_ack = transmit(sender_socket, src_port, nack, new_ack, 0, ack_flag, 0, 0, "", 0)
-	#print (new_seq, new_recvd_ack)
         while True:
             while send_new_ack != new_seq:
                 new_seq, new_recvd_ack, new_recvd_data, fin = dismantle_packet(receiver_socket)
